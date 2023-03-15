@@ -81,7 +81,7 @@ public class WhatsappRepository {
 
 
         GrpMsgMap.get(group).add(message);
-        senderMessageMap.get(group).add(message);
+        senderMessageMap.get(sender).add(message);
         messages.add(message);
 
 
