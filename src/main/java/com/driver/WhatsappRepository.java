@@ -43,6 +43,7 @@ public class WhatsappRepository {
         else {
             userMap.put(name,mobile);
             userMobile.add(mobile);
+            senderMessageMap.put(new User(name,mobile),new ArrayList<>());
         }
 
         return "SUCCESS";
@@ -69,6 +70,7 @@ public class WhatsappRepository {
                 adminMap.put(g,users.get(0));
                 grpListMap.put(g,users);
                 g.setNumberOfParticipants(users.size());
+                GrpMsgMap.put(g,new ArrayList<>());
             }
         }
 
@@ -76,28 +78,20 @@ public class WhatsappRepository {
     }
 
     public int sendMessage(Message message, User sender, Group group) throws Exception {
-        if(grpListMap.containsKey(group) == false)
+        if(!grpListMap.containsKey(group))
         {
            throw new Exception("Group does not exist");
         }
-        if(grpListMap.get(group).contains(sender) == false)
+        if(!grpListMap.get(group).contains(sender))
         {
             throw new Exception("You are not allowed to send message");
         }
 
-            if(GrpMsgMap.containsKey(group))
-            {
-                GrpMsgMap.get(group).add(message);
-                senderMessageMap.get(sender).add(message);
-                messages.add(message);
-            }
-            else {
-                List<Message> l = new ArrayList<>();
-                l.add(message);
-                GrpMsgMap.put(group,l);
-                senderMessageMap.put(sender,l);
-                messages.add(message);
-            }
+
+        GrpMsgMap.get(group).add(message);
+        senderMessageMap.get(group).add(message);
+        messages.add(message);
+
 
         return GrpMsgMap.get(group).size();
     }
@@ -107,15 +101,15 @@ public class WhatsappRepository {
         {
             throw new Exception("Group does not exist");
         }
-        else if(adminMap.get(group).equals(user) == false)
+        else if(adminMap.get(group) != approver)
         {
             throw new Exception("Approver does not have rights");
         }
-        else if(grpListMap.get(group).contains(user) == false){
+        else if(!grpListMap.get(group).contains(user)){
             throw new Exception("User is not a participant");
         }
         else {
-            adminMap.put(group,user);
+            adminMap.replace(group,approver);
         }
 
         return "SUCCESS";
