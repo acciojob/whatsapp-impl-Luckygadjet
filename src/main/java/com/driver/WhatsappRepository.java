@@ -56,6 +56,7 @@ public class WhatsappRepository {
             if(users.size() == 2)
             {
                 g.setName(users.get(1).getName());
+                g.setNumberOfParticipants(2);
 
                 // Not Understood whether i should move this as a group to Grouo MAp
 
@@ -67,6 +68,7 @@ public class WhatsappRepository {
                 g.setName("Group "+customGroupCount);
                 adminMap.put(g,users.get(0));
                 grpListMap.put(g,users);
+                g.setNumberOfParticipants(users.size());
             }
         }
 
@@ -78,11 +80,11 @@ public class WhatsappRepository {
         {
            throw new Exception("Group does not exist");
         }
-        else if(grpListMap.get(group).contains(sender) == false)
+        if(grpListMap.get(group).contains(sender) == false)
         {
             throw new Exception("You are not allowed to send message");
         }
-        else {
+
             if(GrpMsgMap.containsKey(group))
             {
                 GrpMsgMap.get(group).add(message);
@@ -96,7 +98,7 @@ public class WhatsappRepository {
                 senderMessageMap.put(sender,l);
                 messages.add(message);
             }
-        }
+
         return GrpMsgMap.get(group).size();
     }
 
@@ -162,6 +164,7 @@ public class WhatsappRepository {
                         update.remove(m);  // Removing Grp Messages that user sent
                     }
                 }
+                grp.setNumberOfParticipants(grp.getNumberOfParticipants()-1);
                 GrpMsgMap.put(grp,update);
                 grpListMap.get(grp).remove(user);
                 ans +=grpListMap.get(grp).size();
