@@ -51,30 +51,22 @@ public class WhatsappRepository {
     }
 
     public Group createGroup(List<User> users) {
-        Group g = new Group();
-        if(users.size() >= 2)
-        {
-            if(users.size() == 2)
-            {
-                g.setName(users.get(1).getName());
-                g.setNumberOfParticipants(2);
 
-                // Not Understood whether i should move this as a group to Grouo MAp
-
-                //Dont Make the Admin
-                //adminMap.put(g,users.get(0));  // private HashMap<Group, User> adminMap;
-            }
-            else {
-                customGroupCount++;
-                g.setName("Group "+customGroupCount);
-                adminMap.put(g,users.get(0));
-                grpListMap.put(g,users);
-                g.setNumberOfParticipants(users.size());
-                GrpMsgMap.put(g,new ArrayList<>());
-            }
+        //  If there are only 2 users, the group is a personal chat
+        if(users.size() == 2){
+            Group gp = new Group(users.get(1).getName(),2);
+            grpListMap.put(gp,users);
+            GrpMsgMap.put(gp,new ArrayList<>());
+            return gp;
+        }else {
+            customGroupCount++;
+            Group gp = new Group("Group " + customGroupCount,users.size());
+            grpListMap.put(gp,users);
+            GrpMsgMap.put(gp,new ArrayList<>());
+            adminMap.put(gp,users.get(0));
+            return gp;
         }
 
-        return g;
     }
 
     public int sendMessage(Message message, User sender, Group group) throws Exception {
